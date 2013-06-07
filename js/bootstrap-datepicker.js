@@ -741,12 +741,12 @@
             timeComponents.filter('[data-time-component=hours]').text(hour);
             timeComponents.filter('[data-time-component=minutes]').text(minute);
             timeComponents.filter('[data-time-component=seconds]').text(second);
-
-            this.widget.data('selectedTimeComponentIndex', 0);
-            var that = this, $table = this.widget.find('.timepicker-picker > table')[0];
-            $table.selectedIndex = 0;
-            $table.keydown = function (e) {
-                // TODO - Fix keydown event.
+			
+            var that = this, $table = this.widget.find('.timepicker-picker > table');
+			if($table.data('selectionIndex')==null) {
+				$table.data('selectionIndex',0);
+			}
+            $table.data('keydown', function (e) {
                 e.stopPropagation();
                 e.preventDefault();
 
@@ -760,19 +760,56 @@
                     case 39: // right
                         if (!that.o.keyboardNavigation) break;
                         dir = e.keyCode == 37 ? -1 : 1;
-                        console.log(timeComponents);
-                        $table.selectedIndex = ($table.selectedIndex + dir + timeComponents.length) % timeComponents.length;
-                        timeComponents.removeClass('focused')
-                        $(timeComponents[$table.selectedIndex]).addClass('focused');
-                        console.log($table.selectedIndex);
+                        var selectionIndex = $table.data('selectionIndex');
+                        selectionIndex = (selectionIndex + dir + timeComponents.length) % timeComponents.length;
+                        timeComponents.removeClass('focused');
+                        $(timeComponents[selectionIndex]).addClass('focused');
+						$table.data('selectionIndex',selectionIndex);
                         break;
                     case 38: // up
                     case 40: // down
                         if (!that.o.keyboardNavigation) break;
-                        dir = e.keyCode == 38 ? -1 : 1;
+                        dir = e.keyCode == 38 ? 1 : -1;
+						switch($table.data('selectionIndex')) {
+							case 0:
+								newDate = that.moveHour(that.date, dir);
+								newViewDate = that.moveHour(that.viewDate, dir);
+								break;
+							case 1:
+								newDate = that.moveMinutes(that.date, dir);
+								newViewDate = that.moveMinutes(that.viewDate, dir);
+								break;
+							case 2:
+								newDate = that.moveSeconds(that.date, dir);
+								newViewDate = that.moveSeconds(that.viewDate, dir);
+								break;
+						}
+						
                         break;
+					case 77: //m
+						newDate = that.switchMeridian(that.date);
+						viewDate = that.switchMeridian(that.viewDate);
+						break;
+					case 32: // space
+						var action = $(timeComponents[$table.data('selectionIndex')]).data('action');
+						that.actions[action].apply(that, []);
+						that.setValue();
+						that.fillTime();
+						that._trigger('changeDate');
+						break;
                 }
-            };
+				
+				if (that.dateWithinRange(newDate)){
+					that.date = newDate;
+					that.viewDate = newViewDate;
+					that.setValue();
+					that.update();
+					e.preventDefault();
+					dateChanged = true;
+				}
+				
+				return dateChanged;
+			});
         },
 
         updateNavArrows: function () {
@@ -931,9 +968,14 @@
             }
         },
 
+		switchMeridian: function(date) {
+			var newDate = new Date(date);
+            newDate.setUTCHours((date.getUTCHours()+12)%24);
+			return newDate;
+		},
         moveHour: function (date, dir) {
             var newDate = new Date(date);
-            newDate.getUTCHours((date.getUTCHours() + 48 + dir) % 24);
+            newDate.setUTCHours((date.getUTCHours() + 48 + dir) % 24);
             return newDate;
         },
 
@@ -943,7 +985,7 @@
             return newDate;
         },
 
-        moveSec: function (date, dir) {
+        moveSeconds: function (date, dir) {
             var newDate = new Date(date);
             newDate.setUTCSeconds((date.getUTCSeconds() + 120 + dir) % 60);
             return newDate;
@@ -1103,7 +1145,7 @@
 				dir, day, month,
 				newDate, newViewDate;
 
-            var keydownDelegate = this.widget.find('.in.collapse div:visible > table')[0].keydown;
+            var keydownDelegate = this.widget.find('.in.collapse div:visible > table').data('keydown');
             if (keydownDelegate) {
                 dateChanged = keydownDelegate(e);
             }
