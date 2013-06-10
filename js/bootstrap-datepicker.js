@@ -311,16 +311,22 @@
         show: function (e) {
             if (!this.isInline)
                 this.widget.appendTo('body');
-				
-			// Reset the view to default date/time pickers
 			
+			var wasClosed = this.widget.is(':visible');
             this.widget.show();
+			
+			// Reset the view to default date/time pickers
             this.height = this.component ? this.component.outerHeight() : this.element.outerHeight();
-			this.widget.find('.collapse').filter(":first").collapse('show');
-			var expanded = this.widget.find('.collapse.in');
-			var collapseData = expanded.data('collapse');
-			if (collapseData) {
-				expanded.collapse('hide');
+			if(this.o.pickTime && !wasClosed) {
+				this.widget.find('.collapse').filter(":first").collapse('show');
+				var expanded = this.widget.find('.collapse.in');
+				var collapseData = expanded.data('collapse');
+				if (collapseData) {
+					expanded.collapse('hide');
+				}
+			}
+			else {
+				
 			}
             this.place();
             this._attachSecondaryEvents();
@@ -440,7 +446,7 @@
                 delete this.element.data().date;
             }
 
-            this.date = this.parseDate(date);
+            this.date = this.parseDate(date) || this.date;
             if (!this.date)
                 this.date = new Date();
 
@@ -982,6 +988,9 @@
                                 }
                             }
                             this._setDate(UTCDate(year, month, day, 0, 0, 0, 0));
+							if(!this.o.pickTime) {
+								this.hide();
+							}
                         }
                         break;
                 }
@@ -1657,7 +1666,7 @@
     function getTemplate(timeIcon, pickDate, pickTime, is12Hours, showSeconds, collapse) {
         if (pickDate && pickTime) {
             return (
-        '<div class="bootstrap-datetimepicker-widget datepicker dropdown-menu">' +
+        '<div class="bootstrap-datetimepicker-widget dropdown-menu">' +
           '<ul>' +
             '<li' + (collapse ? ' class="collapse"' : '') + '>' +
               '<div class="datepicker">' +
@@ -1675,7 +1684,7 @@
       );
         } else if (pickTime) {
             return (
-        '<div class="bootstrap-datetimepicker-widget datepicker dropdown-menu">' +
+        '<div class="bootstrap-datetimepicker-widget dropdown-menu">' +
           '<div class="timepicker">' +
             TPGlobal.getTemplate(is12Hours, showSeconds) +
           '</div>' +
@@ -1683,7 +1692,7 @@
       );
         } else {
             return (
-        '<div class="bootstrap-datetimepicker-widget datepicker dropdown-menu">' +
+        '<div class="bootstrap-datetimepicker-widget dropdown-menu">' +
           '<div class="datepicker">' +
             DPGlobal.template +
           '</div>' +
@@ -1877,7 +1886,7 @@
 						'</div>';
 
     var TPGlobal = {
-        hourTemplate: '<span data-action="showHours" data-time-component="hours" class="timepicker-hour"></span>',
+        hourTemplate: '<span data-action="showHours" data-time-component="hours" class="timepicker-hour focused"></span>',
         minuteTemplate: '<span data-action="showMinutes" data-time-component="minutes" class="timepicker-minute"></span>',
         secondTemplate: '<span data-action="showSeconds" data-time-component="seconds" class="timepicker-second"></span>'
     };
