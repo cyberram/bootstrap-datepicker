@@ -74,7 +74,7 @@ test('MMMM: Month full name.', function(){
 
 test('yy: Year, two-digit.', function(){
     this.input
-        .val('2012-03-05')
+        .val('12-03-05')
         .datepicker({format: 'yy-MM-dd'})
         .datepicker('setValue');
     equal(this.input.val().split('-')[0], '12');
@@ -117,7 +117,7 @@ test('yyyy-MM-dd: Regression: Infinite loop when numbers used for month', functi
         .val('2012-02-12')
         .datepicker({format: 'yyyy-MM-dd'})
         .datepicker('setValue');
-    equal(this.input.val(), '2012-February-12');
+    equal(this.input.val(), '2012-02-12');
 });
 
 test('+1d: Tomorrow', patch_date(function(Date){
@@ -156,19 +156,19 @@ test('-1w: Last week', patch_date(function(Date){
     equal(this.input.val(), '08-03-2012');
 }));
 
-test('+1m: Next month', patch_date(function(Date){
+test('+1M: Next month', patch_date(function(Date){
     Date.now = UTCDate(2012, 2, 15);
     this.input
-        .val('+1m')
+        .val('+1M')
         .datepicker({format: 'dd-MM-yyyy'})
         .datepicker('setValue');
     equal(this.input.val(), '15-04-2012');
 }));
 
-test('-1m: Last month', patch_date(function(Date){
+test('-1M: Last month', patch_date(function(Date){
     Date.now = UTCDate(2012, 2, 15);
     this.input
-        .val('-1m')
+        .val('-1M')
         .datepicker({format: 'dd-MM-yyyy'})
         .datepicker('setValue');
     equal(this.input.val(), '15-02-2012');
@@ -192,13 +192,67 @@ test('-1y: Last year', patch_date(function(Date){
     equal(this.input.val(), '15-03-2011');
 }));
 
-test('-1y +2m: Multiformat', patch_date(function(Date){
-    Date.now = UTCDate(2012, 2, 15);
+test('+1h: Next Hour', patch_date(function(Date){
+    Date.now = UTCDate(2012, 2, 15, 2, 0, 0);
     this.input
-        .val('-1y +2m')
-        .datepicker({format: 'dd-MM-yyyy'})
+        .val('+1h')
+        .datepicker({format: 'dd-MM-yyyy hh:mm:ss'})
         .datepicker('setValue');
-    equal(this.input.val(), '15-05-2011');
+    equal(this.input.val(), '15-03-2012 03:00:00');
+}));
+
+test('-1h: Last Hour', patch_date(function(Date){
+    Date.now = UTCDate(2012, 2, 15, 2, 0, 0);
+    this.input
+        .val('-1h')
+        .datepicker({format: 'dd-MM-yyyy hh:mm:ss'})
+        .datepicker('setValue');
+    equal(this.input.val(), '15-03-2012 01:00:00');
+}));
+
+test('+1m: Next Minute', patch_date(function(Date){
+    Date.now = UTCDate(2012, 2, 15, 2, 0, 0);
+    this.input
+        .val('+1m')
+        .datepicker({format: 'dd-MM-yyyy hh:mm:ss'})
+        .datepicker('setValue');
+    equal(this.input.val(), '15-03-2012 02:01:00');
+}));
+
+test('-1m: Last Minute', patch_date(function(Date){
+    Date.now = UTCDate(2012, 2, 15, 2, 0, 0);
+    this.input
+        .val('-1m')
+        .datepicker({format: 'dd-MM-yyyy hh:mm:ss'})
+        .datepicker('setValue');
+    equal(this.input.val(), '15-03-2012 02:59:00');
+}));
+
+test('+1s: Next Second', patch_date(function(Date){
+    Date.now = UTCDate(2012, 2, 15, 2, 0, 0);
+    this.input
+        .val('+1s')
+        .datepicker({format: 'dd-MM-yyyy hh:mm:ss'})
+        .datepicker('setValue');
+    equal(this.input.val(), '15-03-2012 02:00:01');
+}));
+
+test('-1s: Last Second', patch_date(function(Date){
+    Date.now = UTCDate(2012, 2, 15, 2, 0, 0);
+    this.input
+        .val('-1s')
+        .datepicker({format: 'dd-MM-yyyy hh:mm:ss'})
+        .datepicker('setValue');
+    equal(this.input.val(), '15-03-2012 02:00:59');
+}));
+
+test('-1y +2M +3h: Multiformat', patch_date(function(Date){
+    Date.now = UTCDate(2012, 2, 15, 3);
+    this.input
+        .val('-1y +2M +3h')
+        .datepicker({format: 'dd-MM-yyyy h'})
+        .datepicker('setValue');
+    equal(this.input.val(), '15-05-2011 6');
 }));
 
 test('Regression: End-of-month bug', patch_date(function(Date){
@@ -214,7 +268,7 @@ test('Invalid formats are force-parsed into a valid date on tab', patch_date(fun
     Date.now = UTCDate(2012, 4, 31);
     this.input
         .val('44-44-4444')
-        .datepicker({format: 'yyyy-MM-dd'})
+        .datepicker({format: 'yyyy-MMMM-dd'})
         .focus();
 
     this.input.trigger({
@@ -222,7 +276,7 @@ test('Invalid formats are force-parsed into a valid date on tab', patch_date(fun
         keyCode: 9
     });
 
-    equal(this.input.val(), '56-September-30');
+    equal(this.input.val(), '2012-May-31');
 }));
 
 test('Trailing separators', patch_date(function(Date){

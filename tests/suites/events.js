@@ -2,13 +2,13 @@ module('Events', {
     setup: function(){
         this.input = $('<input type="text" value="31-03-2011">')
                         .appendTo('#qunit-fixture')
-                        .datepicker({format: "dd-mm-yyyy"})
+                        .datepicker({format: "dd-MM-yyyy"})
                         .focus(); // Activate for visibility checks
         this.dp = this.input.data('datepicker')
-        this.picker = this.dp.picker;
+        this.widget = this.dp.widget;
     },
     teardown: function(){
-        this.picker.remove();
+        this.widget.remove();
     }
 });
 
@@ -21,28 +21,28 @@ test('Selecting a year from decade view triggers pickYear', function(){
     });
 
     equal(this.dp.viewMode, 0);
-    target = this.picker.find('.datepicker-days thead th.datepicker-switch');
+    target = this.widget.find('.datepicker-days thead th.datepicker-switch');
     ok(target.is(':visible'), 'View switcher is visible');
 
     target.click();
-    ok(this.picker.find('.datepicker-months').is(':visible'), 'Month picker is visible');
+    ok(this.widget.find('.datepicker-months').is(':visible'), 'Month picker is visible');
     equal(this.dp.viewMode, 1);
     // Not modified when switching modes
     datesEqual(this.dp.viewDate, UTCDate(2011, 2, 31));
     datesEqual(this.dp.date, UTCDate(2011, 2, 31));
 
-    target = this.picker.find('.datepicker-months thead th.datepicker-switch');
+    target = this.widget.find('.datepicker-months thead th.datepicker-switch');
     ok(target.is(':visible'), 'View switcher is visible');
 
     target.click();
-    ok(this.picker.find('.datepicker-years').is(':visible'), 'Year picker is visible');
+    ok(this.widget.find('.datepicker-years').is(':visible'), 'Year picker is visible');
     equal(this.dp.viewMode, 2);
     // Not modified when switching modes
     datesEqual(this.dp.viewDate, UTCDate(2011, 2, 31));
     datesEqual(this.dp.date, UTCDate(2011, 2, 31));
 
     // Change years to test internal state changes
-    target = this.picker.find('.datepicker-years tbody span:contains(2010)');
+    target = this.widget.find('.datepicker-years tbody span:contains(2010)');
     target.click();
     equal(this.dp.viewMode, 1);
     // Only viewDate modified
@@ -60,17 +60,17 @@ test('Selecting a month from year view triggers pickMonth', function(){
     });
 
     equal(this.dp.viewMode, 0);
-    target = this.picker.find('.datepicker-days thead th.datepicker-switch');
+    target = this.widget.find('.datepicker-days thead th.datepicker-switch');
     ok(target.is(':visible'), 'View switcher is visible');
 
     target.click();
-    ok(this.picker.find('.datepicker-months').is(':visible'), 'Month picker is visible');
+    ok(this.widget.find('.datepicker-months').is(':visible'), 'Month picker is visible');
     equal(this.dp.viewMode, 1);
     // Not modified when switching modes
     datesEqual(this.dp.viewDate, UTCDate(2011, 2, 31));
     datesEqual(this.dp.date, UTCDate(2011, 2, 31));
 
-    target = this.picker.find('.datepicker-months tbody span:contains(Apr)');
+    target = this.widget.find('.datepicker-months tbody span:contains(Apr)');
     target.click();
     equal(this.dp.viewMode, 0);
     // Only viewDate modified

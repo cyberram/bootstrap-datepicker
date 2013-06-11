@@ -5,29 +5,29 @@ module('Mouse Navigation (All)', {
                         .datepicker({format: "dd-mm-yyyy"})
                         .focus(); // Activate for visibility checks
         this.dp = this.input.data('datepicker')
-        this.picker = this.dp.picker;
+        this.widget = this.dp.widget;
     },
     teardown: function(){
-        this.picker.remove();
+        this.widget.remove();
     }
 });
 
-test('Clicking datepicker does not hide datepicker', function(){
-    ok(this.picker.is(':visible'), 'Picker is visible');
-    this.picker.trigger('mousedown');
-    ok(this.picker.is(':visible'), 'Picker is still visible');
+test('Clicking datepicker should not hide datepicker', function(){
+    ok(this.widget.is(':visible'), 'Widget is visible');
+    this.widget.trigger('mousedown');
+    ok(this.widget.is(':visible'), 'Widget is still visible');
 });
 
-test('Clicking outside datepicker hides datepicker', function(){
+test('Clicking outside datepicker should hide datepicker', function(){
     var $otherelement = $('<div />');
     $('body').append($otherelement);
 
-    ok(this.picker.is(':visible'), 'Picker is visible');
+    ok(this.widget.is(':visible'), 'Widget is visible');
     this.input.trigger('click');
-    ok(this.picker.is(':visible'), 'Picker is still visible');
+    ok(this.widget.is(':visible'), 'Widget is still visible');
 
     $otherelement.trigger('mousedown');
-    ok(this.picker.is(':not(:visible)'), 'Picker is hidden');
+    ok(this.widget.is(':not(:visible)'), 'Widget is hidden');
 
     $otherelement.remove();
 });

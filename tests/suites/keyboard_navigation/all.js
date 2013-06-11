@@ -5,22 +5,22 @@ module('Keyboard Navigation (All)', {
                         .datepicker({format: "dd-mm-yyyy"})
                         .focus(); // Activate for visibility checks
         this.dp = this.input.data('datepicker')
-        this.picker = this.dp.picker;
+        this.widget = this.dp.widget;
     },
     teardown: function(){
-        this.picker.remove();
+        this.widget.remove();
     }
 });
 
 test('TAB hides picker', function(){
     var target;
 
-    ok(this.picker.is(':visible'), 'Picker is visible');
+    ok(this.widget.is(':visible'), 'Picker is visible');
 
     this.input.trigger({
         type: 'keydown',
         keyCode: 9
     });
 
-    ok(this.picker.is(':not(:visible)'), 'Picker is hidden');
+    ok(this.widget.is(':not(:visible)'), 'Picker is hidden');
 });

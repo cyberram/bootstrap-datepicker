@@ -4,25 +4,25 @@ module('Calendar Weeks', {
             .appendTo('#qunit-fixture')
             .val('2013-01-14')
             .datepicker({
-                format: 'yyyy-mm-dd',
+                format: 'yyyy-MM-dd',
                 calendarWeeks: true
             })
             .focus(); // Activate for visibility checks
         this.dp = this.input.data('datepicker')
-        this.picker = this.dp.picker;
+        this.widget = this.dp.widget;
     },
     teardown: function(){
-        this.picker.remove();
+        this.widget.remove();
     }
 });
 
 test('adds cw header column', function(){
-    var target = this.picker.find('.datepicker-days thead th:first-child');
+    var target = this.widget.find('.datepicker-days thead th:first-child');
     ok(target.hasClass('cw'), 'First column heading is from cw column');
 });
 
 test('adds calendar week cells to each day row', function(){
-    var target = this.picker.find('.datepicker-days tbody tr');
+    var target = this.widget.find('.datepicker-days tbody tr');
 
     expect(target.length);
     target.each(function(i){
@@ -32,7 +32,7 @@ test('adds calendar week cells to each day row', function(){
 });
 
 test('displays correct calendar week', function(){
-    var target = this.picker.find('.datepicker-days tbody tr');
+    var target = this.widget.find('.datepicker-days tbody tr');
 
     expect(target.length);
     target.each(function(i){
@@ -42,7 +42,7 @@ test('displays correct calendar week', function(){
 });
 
 test('it prepends column to switcher thead row', function(){
-    var target = this.picker.find('.datepicker-days thead tr:first-child');
+    var target = this.widget.find('.datepicker-days thead tr:first-child');
     equal(target.children().length, 4, 'first row has 4 columns');
     ok(target.children().first().hasClass('cw'), 'cw column is prepended');
 });
